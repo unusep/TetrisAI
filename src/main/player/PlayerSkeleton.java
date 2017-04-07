@@ -3,22 +3,17 @@ import java.util.ArrayList;
 
 import main.brain.learner.HeuristicGeneticLearner;
 import main.brain.learner.ILearner;
-import main.brain.learner.genetic.Gene;
 import main.brain.learner.genetic.crossover.*;
 import main.brain.learner.genetic.fitness.*;
 import main.brain.learner.genetic.mutator.*;
 import main.brain.learner.genetic.selector.*;
-import main.brain.move.picker.HeuristicMovePicker;
-import main.brain.move.picker.IMovePicker;
 import main.tetris.engine.*;
 import main.tetris.heuristics.IHeuristic;
 
 public class PlayerSkeleton {
     public static final String POPULATION_FILEPATH = "population.txt";
+    private ILearner brain;
     
-    private ILearner<Gene<IHeuristic>> brain;
-    
-	//implement this function to have a working system
 	public int[] pickMove(TetrisSimulator simulator, int[][] legalMoves) {
 		return brain.getMovePicker().pickBest(simulator, legalMoves);
 	}
@@ -48,7 +43,8 @@ public class PlayerSkeleton {
 		        crossOverOperator, 
 		        fitnessFunction, 
 		        mutationOperator, 
-		        populationSelector);
+		        populationSelector
+		        );
         
 		while(!s.hasLost()) {
 			s.makeMove(p.pickMove(s,s.legalMoves()));

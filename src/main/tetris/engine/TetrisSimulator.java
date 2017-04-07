@@ -81,7 +81,7 @@ public class TetrisSimulator extends State {
     };
     
     //initialize legalMoves
-    {
+    public TetrisSimulator() {
         //for each piece type
         for(int i = 0; i < N_PIECES; i++) {
             //figure number of legal moves
@@ -320,5 +320,65 @@ public class TetrisSimulator extends State {
         nextPiece = oldNextPiece;
     }
     
+
+    private int performMove(int pieceIndex, int rotationIndex, int leftPosition) {
+
+        //height if the first column makes contact
+        int height = top[leftPosition] - pBottom[pieceIndex][rotationIndex][0];
+        //for each column beyond the first in the piece
+        for (int c = 0; c < pWidth[pieceIndex][rotationIndex]; c++) {
+            height = Math.max(height, top[leftPosition + c] - pBottom[pieceIndex][rotationIndex][c]);
+        }
+
+        //check if game ended
+        if (height + pHeight[pieceIndex][rotationIndex] >= NUM_ROWS) {
+            return -1;
+        }
+
+        //for each column in the piece - fill in the appropriate blocks
+        for (int i = 0; i < pWidth[pieceIndex][rotationIndex]; i++) {
+
+            //from bottom to top of brick
+            for (int h = height + pBottom[pieceIndex][rotationIndex][i]; h < height + pTop[pieceIndex][rotationIndex][i]; h++) {
+                board[h][i + leftPosition] = true;
+            }
+        }
+
+        //adjust top
+        for (int c = 0; c < pWidth[pieceIndex][rotationIndex]; c++) {
+            top[leftPosition + c] = height + pTop[pieceIndex][rotationIndex][c];
+        }
+
+        int rowsCleared = 0;
+
+        //check for full rows - starting at the top
+        for (int r = height + pHeight[pieceIndex][rotationIndex] - 1; r >= height; r--) {
+            //check all columns in the row
+            boolean full = true;
+            for (int c = 0; c < NUM_COLS; c++) {
+                if (!board[r][c]) {
+                    full = false;
+                    break;
+                }
+            }
+            //if the row was full - remove it and slide above stuff down
+            if (full) {
+                rowsCleared++;
+                //for each column
+                for (int c = 0; c < NUM_COLS; c++) {
+
+                    //slide down all bricks
+                    for (int i = r; i < top[c]; i++) {
+                        board[i][c] = board[i + 1][c];
+                    }
+                    //lower the top
+                    top[c]--;
+                    while (top[c] >= 1 && !board[top[c] - 1][c]) top[c]--;
+                }
+            }
+        }
+        return rowsCleared;
+    };
+
     
 }

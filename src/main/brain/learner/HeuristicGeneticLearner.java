@@ -20,7 +20,6 @@ import main.tetris.heuristics.IHeuristic;
  */
 public class HeuristicGeneticLearner implements ILearner {
     private Population<IHeuristic> population;
-    private String pathToPopulation;
     
     public HeuristicGeneticLearner(
             int populationSize, 

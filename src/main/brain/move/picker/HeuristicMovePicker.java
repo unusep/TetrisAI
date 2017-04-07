@@ -2,6 +2,7 @@ package main.brain.move.picker;
 
 import java.util.ArrayList;
 
+import main.tetris.engine.State;
 import main.tetris.engine.TetrisSimulator;
 import main.tetris.heuristics.IHeuristic;
 
@@ -23,14 +24,14 @@ public class HeuristicMovePicker implements IMovePicker {
     public int[] pickBest(TetrisSimulator simulator, int[][] legalMoves) {
         double bestScore = 0.0;
         int[] bestMove = legalMoves[0]; // TODO: may cause null pointer exception if there are no legal moves
+        simulator.saveState();
         for (int[] move : legalMoves){
-            simulator.saveState();
             simulator.makeMove(move);
             double score;
             if (simulator.hasLost()){
                 score = LOST_SCORE;
             } else {
-                score = evaluateBoard(simulator.getField());
+                score = evaluateBoard(simulator);
             }
             // update score and move if it's better than current maximum
             if (score > bestScore){
@@ -48,10 +49,10 @@ public class HeuristicMovePicker implements IMovePicker {
      * @param board
      * @return value of board
      */
-    private double evaluateBoard(int[][] board) {
+    private double evaluateBoard(TetrisSimulator state) {
         double score = 0.0;
         for (int i = 0; i < Math.min(weights.size(), heuristics.size()); i++){
-            score += weights.get(i) * heuristics.get(i).getValue(board);
+            score += weights.get(i) * heuristics.get(i).getValue(state);
         }
         return score;
     }

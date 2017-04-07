@@ -55,6 +55,7 @@ public class Population<E> {
         } catch (IOException e) {
             System.out.println("File failed to save");
         }
+        System.out.println("Population saved to disk");
     }
     
     /**
@@ -150,7 +151,7 @@ public class Population<E> {
             }
             sc.close();
         } catch (FileNotFoundException e) {
-            System.out.println("Pathfile not found: " + filepath);
+            System.out.println("Pathfile not found: " + filepath +". Will try to create one.");
         }
         
         // if file does not have enough gene, generate more automatically

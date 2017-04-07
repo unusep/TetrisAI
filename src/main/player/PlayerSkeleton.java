@@ -39,7 +39,7 @@ public class PlayerSkeleton {
 		IFitnessFunction<IHeuristic> fitnessFunction 
 		    = new AverageRowsClearedFitnessFunction(trainingNumPieces, trainingNumGames);
 		IMutationOperator<IHeuristic> mutationOperator;
-		IPopulationSelector<IHeuristic> populationSelector;
+		IPopulationSelector<IHeuristic> populationSelector = new PopulationFitnessSelector<IHeuristic>();
 		
         p.brain = new HeuristicGeneticLearner(
 		        populationSize, 

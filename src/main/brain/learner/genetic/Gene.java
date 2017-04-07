@@ -2,6 +2,7 @@ package main.brain.learner.genetic;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  * Gene stores chromosomes of type E and the weights of each of its chromosome
@@ -63,5 +64,4 @@ public class Gene<E> implements Comparable<Gene<E>> {
         res += decimalFormat.format(fitness);
         return res;
     }
-    
 }

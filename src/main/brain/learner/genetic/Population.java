@@ -60,7 +60,7 @@ public class Population<E> {
      * @return fittest gene
      */
     public Gene<E> getFittest() {
-        return populationSelector.selectToBreed(genePool).get(0);
+        return populationSelector.selectElite(genePool).get(0);
     }
     
     /**
@@ -75,11 +75,10 @@ public class Population<E> {
     public void nextGeneration() {
         evaluateFitness(genePool);
         normaliseFitness(genePool);
-        ArrayList<Gene<E>> parents = selectToBreed(genePool);
+        ArrayList<Gene<E>> parents = selectElite(genePool);
         ArrayList<Gene<E>> babies = crossOver(parents);
         mutate(babies);
-        ArrayList<Gene<E>> toKill = selectToKill(genePool);
-        genePool.removeAll(toKill);
+        cull(genePool);
         genePool.addAll(babies);
     }
     
@@ -194,8 +193,8 @@ public class Population<E> {
      * @param genePool
      * @return the genes that should be removed
      */
-    private ArrayList<Gene<E>> selectToKill(ArrayList<Gene<E>> genes) {
-        return populationSelector.selectToKill(genePool);
+    private void cull(ArrayList<Gene<E>> genePool) {
+        populationSelector.cull(genePool);
     }
     
     /**
@@ -203,8 +202,8 @@ public class Population<E> {
      * @param genePool
      * @return the genes that are allowed to breed
      */
-    private ArrayList<Gene<E>> selectToBreed(ArrayList<Gene<E>> genes) {
-        return populationSelector.selectToBreed(genes);
+    private ArrayList<Gene<E>> selectElite(ArrayList<Gene<E>> genes) {
+        return populationSelector.selectElite(genes);
     }
 
     /**

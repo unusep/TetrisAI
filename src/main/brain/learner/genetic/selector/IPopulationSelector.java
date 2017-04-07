@@ -9,14 +9,16 @@ public interface IPopulationSelector<E> {
     /**
      * Given a genePool, select the genes to breed
      * @param genePool
-     * @return genes selected for breed
+     * @param num number of genes to select
+     * @return genes selected for breeding
      */
-    public ArrayList<Gene<E>> selectToBreed(ArrayList<Gene<E>> genePool);
+    public ArrayList<Gene<E>> selectElite(ArrayList<Gene<E>> genePool, int num);
     
     /**
      * Given a genePool, select the genes to kill
      * @param genePool
-     * @return genes selected for killing
+     * @param num number of genes to kill
+     * @return genepool after culling
      */
-    public ArrayList<Gene<E>> selectToKill(ArrayList<Gene<E>> genePool);
+    public void cull(ArrayList<Gene<E>> genePool, int num);
 }

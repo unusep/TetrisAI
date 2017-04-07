@@ -1,14 +1,14 @@
 package main.tetris.heuristics;
 
-import main.tetris.engine.State;
+import main.tetris.engine.TetrisSimulator;
 
 public class HolesHeuristic implements IHeuristic {
 
     @Override
-    public double getValue(State state) {
+    public double getValue(TetrisSimulator state) {
         double count = 0;
         
-        for(int col = 0; col < State.COLS; col++){
+        for(int col = 0; col < TetrisSimulator.COLS; col++){
             int topRow = state.getTop()[col];
             
             //Check the rows from bottom up

@@ -20,6 +20,8 @@ import main.brain.learner.genetic.selector.*;
  * TODO: Abstract file functions to facilitate SLAP
  */
 public class Population<E> {
+    private final double PERCENTAGE_TO_KILL = 0.2;
+    
     private ArrayList<Gene<E>> genePool;
     private ICrossoverOperator<E> crossOverOperator;
     private IFitnessFunction<E> fitnessFunction;
@@ -60,7 +62,7 @@ public class Population<E> {
      * @return fittest gene
      */
     public Gene<E> getFittest() {
-        return populationSelector.selectElite(genePool).get(0);
+        return populationSelector.selectElite(genePool, 1).get(0);
     }
     
     /**
@@ -75,10 +77,10 @@ public class Population<E> {
     public void nextGeneration() {
         evaluateFitness(genePool);
         normaliseFitness(genePool);
-        ArrayList<Gene<E>> parents = selectElite(genePool);
+        ArrayList<Gene<E>> parents = selectElite(genePool, (int) Math.round(PERCENTAGE_TO_KILL * genePool.size()));
         ArrayList<Gene<E>> babies = crossOver(parents);
         mutate(babies);
-        cull(genePool);
+        cull(genePool, (int) Math.round(PERCENTAGE_TO_KILL * genePool.size()));
         genePool.addAll(babies);
     }
     
@@ -191,19 +193,21 @@ public class Population<E> {
     /**
      * Select the genes that should be killed using the population selector
      * @param genePool
+     * @param num number to select
      * @return the genes that should be removed
      */
-    private void cull(ArrayList<Gene<E>> genePool) {
-        populationSelector.cull(genePool);
+    private void cull(ArrayList<Gene<E>> genePool, int num) {
+        populationSelector.cull(genePool, num);
     }
     
     /**
      * Select the genes that are allowed to breed using the population selector
      * @param genePool
+     * @param num number to kill
      * @return the genes that are allowed to breed
      */
-    private ArrayList<Gene<E>> selectElite(ArrayList<Gene<E>> genes) {
-        return populationSelector.selectElite(genes);
+    private ArrayList<Gene<E>> selectElite(ArrayList<Gene<E>> genes, int num) {
+        return populationSelector.selectElite(genes, num);
     }
 
     /**

@@ -8,7 +8,11 @@ import main.brain.learner.genetic.fitness.*;
 import main.brain.learner.genetic.mutator.*;
 import main.brain.learner.genetic.selector.*;
 import main.tetris.engine.*;
+import main.tetris.heuristics.BumpinessHeuristic;
+import main.tetris.heuristics.HolesHeuristic;
 import main.tetris.heuristics.IHeuristic;
+import main.tetris.heuristics.MaximumColumnHeightHeuristic;
+import main.tetris.heuristics.RowsClearedHeuristic;
 
 public class PlayerSkeleton {
     public static final String POPULATION_FILEPATH = "population.txt";
@@ -35,6 +39,10 @@ public class PlayerSkeleton {
         int trainingNumGames = 1; // the number of games to play when evaluating the fitness function (will take the average fitness level) 
 		
 		ArrayList<IHeuristic> heuristics = new ArrayList<IHeuristic>();
+		heuristics.add(new BumpinessHeuristic());
+		heuristics.add(new HolesHeuristic());
+		heuristics.add(new MaximumColumnHeightHeuristic());
+		heuristics.add(new RowsClearedHeuristic());
 		ICrossoverOperator<IHeuristic> crossOverOperator = new SimpleCrossover();
 		IFitnessFunction<IHeuristic> fitnessFunction 
 		    = new AverageRowsClearedFitnessFunction(trainingNumPieces, trainingNumGames);

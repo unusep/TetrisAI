@@ -1,71 +1,236 @@
 package main.brain.learner.genetic;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
 
 import main.brain.learner.genetic.crossover.*;
 import main.brain.learner.genetic.fitness.*;
 import main.brain.learner.genetic.mutator.*;
 import main.brain.learner.genetic.selector.*;
 
-public class Population {
-    ArrayList<Gene> genePool;
-    ICrossoverOperator crossOverOperator;
-    IFitnessFunction fitnessFunction;
-    IMutationOperator mutationOperator;
-    IPopulationSelector populationSelector;
+/**
+ * Stores a population of genes with chromosomes of type E
+ * Genetic algorithm is executed to generate nextGeneration()
+ * TODO: Abstract file functions to facilitate SLAP
+ */
+public class Population<E> {
+    private ArrayList<Gene<E>> genePool;
+    private ICrossoverOperator<E> crossOverOperator;
+    private IFitnessFunction<E> fitnessFunction;
+    private IMutationOperator<E> mutationOperator;
+    private IPopulationSelector<E> populationSelector;
+    private String savePath;
     
-    public Population(Gene gene, int size) {
-        this.genePool = instantiateGenePool(gene, size);
-    }
-    
-    public Population(String filepath){
-        this.genePool = instantiateGenePool(filepath);
-    }
-
-    private ArrayList<Gene> instantiateGenePool(String filepath) {
-        return null;
-    }
-
-    public ArrayList<Gene> instantiateGenePool(Gene gene, int size){
-        return null;
-    }
-    
-    public void nextGeneration() {
-        evaluateFitness(genePool);
-        ArrayList<Gene> fittest = selectFittest(genePool);
-        ArrayList<Gene> babies = crossOver(fittest);
-        killWeakest(genePool);
-        genePool.addAll(babies);
-        save(genePool);
+    public Population(String filepath, ArrayList<E> chromosomes, int populationSize){
+        this.savePath = filepath;
+        this.genePool = instantiateGenePool(filepath, chromosomes, populationSize);
     }
 
     /**
      * Write genes to file
      * @param genes
      */
-    private void save(ArrayList<Gene> genes) {
-        // TODO Auto-generated method stub
-        
+    public void saveToDisk(){
+        File file = new File(savePath);
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+            
+            if (!genePool.isEmpty()) bw.write(genePool.get(0).getHeaders());
+            
+            for (Gene<E> gene : genePool){
+                bw.write(gene.toString());
+                bw.newLine();
+            }
+            
+            bw.flush();
+            bw.close();
+        } catch (IOException e) {
+            System.out.println("File failed to save");
+        }
+    }
+    
+    /**
+     * Returns the fittest gene among the gene pool 
+     * @return fittest gene
+     */
+    public Gene<E> getFittest() {
+        return populationSelector.selectToBreed(genePool).get(0);
+    }
+    
+    /**
+     * Generates the next generation by running the genetic algorithm:
+     * 1) get fitness of genepool
+     * 2) choose genes for breeding
+     * 3) crossover to generate babies 
+     * 4) mutate babies
+     * 5) kill to make room
+     * 6) add new babies to genepool
+     */
+    public void nextGeneration() {
+        evaluateFitness(genePool);
+        normaliseFitness(genePool);
+        ArrayList<Gene<E>> parents = selectToBreed(genePool);
+        ArrayList<Gene<E>> babies = crossOver(parents);
+        mutate(babies);
+        ArrayList<Gene<E>> toKill = selectToKill(genePool);
+        genePool.removeAll(toKill);
+        genePool.addAll(babies);
+    }
+    
+
+    public void setCrossOverOperator(ICrossoverOperator<E> crossOverOperator){
+        this.crossOverOperator = crossOverOperator;
     }
 
-    private void killWeakest(ArrayList<Gene> genes) {
-        // TODO Auto-generated method stub
-        
+    public void setFitnessFunction(IFitnessFunction<E> fitnessFunction){
+        this.fitnessFunction = fitnessFunction;
     }
 
-    private ArrayList<Gene> crossOver(ArrayList<Gene> genes) {
+    public void setmutationOperator(IMutationOperator<E> mutationOperator){
+        this.mutationOperator = mutationOperator;
+    }
+    
+    public void setpopulationSelector(IPopulationSelector<E> populationSelector){
+        this.populationSelector = populationSelector;
+    }
+    
+    /**
+     * Instantiate gene pool of given size using a text file of stored genes
+     * @param gene
+     * @param size
+     * @return
+     */
+    private ArrayList<Gene<E>> instantiateGenePool(String filepath, ArrayList<E> chromosomes, int populationSize) {
+        ArrayList<Gene<E>> genes = new ArrayList<Gene<E>>(populationSize);
+        
+        try {
+            File f = new File(filepath);
+            Scanner sc = new Scanner(f);
+            sc.nextLine();
+            
+            // read from file and generate genes
+            while (sc.hasNext()) {
+                if (populationSize <= 0) break;
+                
+                String line = sc.nextLine();
+                String[] result = line.split(" ");
+                
+                if (result.length -1 != chromosomes.size()){
+                    System.out.println("Warning: chromosomes and weights are not of the same length.");
+                    System.out.println("Warning: will continue by generating a new random population");
+                    break;
+                }
+                
+                double fitness = Double.parseDouble(result[result.length - 1]);
+                
+                ArrayList<Double> weights = new ArrayList<Double>();
+                for (int i = 0; i < chromosomes.size(); i++){
+                    weights.add(Double.parseDouble(result[i]));
+                }
+
+                //
+                Gene<E> gene = new Gene<E>(chromosomes, weights);
+                gene.setFitness(fitness);
+                
+                populationSize--;
+                genes.add(gene);
+            }
+            sc.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("Pathfile not found: " + filepath);
+        }
+        
+        // if file does not have enough gene, generate more automatically
+        if (populationSize > 0){
+            genes.addAll(instantiateGenePool(chromosomes, populationSize));
+        }
+        
+        return genes;
+    }
+
+    /**
+     * Generate a randomised gene pool of given size
+     * @param gene
+     * @param size
+     * @return
+     */
+    public ArrayList<Gene<E>> instantiateGenePool(ArrayList<E> chromosomes, int populationSize){
+        int fitness = 0;
+        ArrayList<Gene<E>> genes = new ArrayList<Gene<E>>(populationSize); 
+        for (int i = 0; i < populationSize; i++){
+            ArrayList<Double> weights = new ArrayList<Double>(chromosomes.size());
+            weights.add(randomDouble(-1, 1));
+            Gene<E> gene = new Gene<E>(chromosomes, weights);
+            gene.setFitness(fitness);
+            genes.add(gene);
+        }
+        return genes;
+    }
+    
+    private double randomDouble(double min, double max){
+        Random randomGenerator = new Random(); 
+        return min + (randomGenerator.nextDouble() * max - min); 
+    }
+    
+    
+    private void mutate(ArrayList<Gene<E>> genes) {
+        for (Gene<E> gene : genes){
+            mutationOperator.mutate(gene);
+        }
+    }
+
+    private ArrayList<Gene<E>> crossOver(ArrayList<Gene<E>> genes) {
         return crossOverOperator.crossover(genes);
     }
 
-    private ArrayList<Gene> selectFittest(ArrayList<Gene> genes) {
-        // TODO Auto-generated method stub
-        return null;
+    /**
+     * Select the genes that should be killed using the population selector
+     * @param genePool
+     * @return the genes that should be removed
+     */
+    private ArrayList<Gene<E>> selectToKill(ArrayList<Gene<E>> genes) {
+        return populationSelector.selectToKill(genePool);
+    }
+    
+    /**
+     * Select the genes that are allowed to breed using the population selector
+     * @param genePool
+     * @return the genes that are allowed to breed
+     */
+    private ArrayList<Gene<E>> selectToBreed(ArrayList<Gene<E>> genes) {
+        return populationSelector.selectToBreed(genes);
     }
 
-    private void evaluateFitness(ArrayList<Gene> genes) {
-        for (Gene gene : genePool){
+    /**
+     * Compute and update the fitness of each gene in the genepool using the fitness function
+     * @param genes
+     */
+    private void evaluateFitness(ArrayList<Gene<E>> genes) {
+        for (Gene<E> gene : genePool){
             double fitness = fitnessFunction.evaluateFitness(gene);
             gene.setFitness(fitness);
+        }
+    }
+
+    /**
+     * Normalization means dividing the fitness value of each individual 
+     * by the sum of all fitness values, so that the sum of all resulting 
+     * fitness values equals 1.
+     * @param genePool
+     */
+    private void normaliseFitness(ArrayList<Gene<E>> genePool) {
+        double totalFitness = 0.0;
+        for (Gene<E> gene : genePool){
+            totalFitness += gene.getFitness();
+        }
+        for (Gene<E> gene : genePool){
+            gene.setFitness(gene.getFitness()/totalFitness);
         }
     }
 

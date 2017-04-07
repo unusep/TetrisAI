@@ -311,9 +311,6 @@ public class State {
 		label.line(0, 0, 0, ROWS+5);
 		label.line(COLS, 0, COLS, ROWS+5);
 	}
-	
-
-	
 
 }
 

@@ -18,16 +18,21 @@ public class PlayerSkeleton {
 		return brain.getMovePicker().pickBest(simulator, legalMoves);
 	}
 	
+	/**
+	 * Pass as arguments 1000 50 to train a population of 1000 people for 50 generations
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		TetrisSimulator s = new TetrisSimulator();
 		new TFrame(s);
 		PlayerSkeleton p = new PlayerSkeleton();
 		
 		// set up genetic learner variables
-		String pathToPopulation = POPULATION_FILEPATH;
 		int populationSize = Integer.parseInt(args[0]);
-        int trainingNumPieces = Integer.parseInt(args[1]);
-        int trainingNumGames = 1;
+		int trainingIterations = Integer.parseInt(args[1]);
+		
+        int trainingNumPieces = 10000; // the number of pieces to play before we cut off the fitness function
+        int trainingNumGames = 1; // the number of games to play when evaluating the fitness function (will take the average fitness level) 
 		
 		ArrayList<IHeuristic> heuristics = new ArrayList<IHeuristic>();
 		ICrossoverOperator<IHeuristic> crossOverOperator;
@@ -38,13 +43,15 @@ public class PlayerSkeleton {
 		
         p.brain = new HeuristicGeneticLearner(
 		        populationSize, 
-		        pathToPopulation, 
+		        POPULATION_FILEPATH, 
 		        heuristics, 
 		        crossOverOperator, 
 		        fitnessFunction, 
 		        mutationOperator, 
 		        populationSelector
 		        );
+        
+        p.brain.trainLearner(trainingIterations);
         
 		while(!s.hasLost()) {
 			s.makeMove(p.pickMove(s,s.legalMoves()));

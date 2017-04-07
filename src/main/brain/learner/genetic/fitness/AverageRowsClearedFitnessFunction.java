@@ -11,8 +11,8 @@ public class AverageRowsClearedFitnessFunction implements IFitnessFunction<IHeur
     private int numGames;
     
     /**
-     * @param the number of games to play (we will take the average fitness score)
-     * @param cutPieces the number of pieces to play before stopping the game
+     * @param numPieces the number of pieces to play before stopping the game
+     * @param numGames the number of games to play (we will take the average fitness score)
      */
     public AverageRowsClearedFitnessFunction(int numPieces, int numGames) {
         this.numGames = numGames;

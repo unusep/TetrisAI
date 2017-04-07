@@ -82,8 +82,14 @@ public class Population<E> {
         mutate(babies);
         cull(genePool, (int) Math.round(PERCENTAGE_TO_KILL * genePool.size()));
         genePool.addAll(babies);
+        printBestGene();
     }
     
+    int printCount = 0;
+    private void printBestGene() {
+        Gene<E> best = getFittest();
+        System.out.println("Turn " + printCount + " Best Fitness: " + best.getFitness() + " Weights: " + best.getChromosomeWeights());
+    }
 
     public void setCrossOverOperator(ICrossoverOperator<E> crossOverOperator){
         this.crossOverOperator = crossOverOperator;

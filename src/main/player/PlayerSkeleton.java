@@ -35,10 +35,10 @@ public class PlayerSkeleton {
         int trainingNumGames = 1; // the number of games to play when evaluating the fitness function (will take the average fitness level) 
 		
 		ArrayList<IHeuristic> heuristics = new ArrayList<IHeuristic>();
-		ICrossoverOperator<IHeuristic> crossOverOperator;
+		ICrossoverOperator<IHeuristic> crossOverOperator = new SimpleCrossover();
 		IFitnessFunction<IHeuristic> fitnessFunction 
 		    = new AverageRowsClearedFitnessFunction(trainingNumPieces, trainingNumGames);
-		IMutationOperator<IHeuristic> mutationOperator;
+		IMutationOperator<IHeuristic> mutationOperator = new GaussianMutation<IHeuristic>();
 		IPopulationSelector<IHeuristic> populationSelector = new PopulationFitnessSelector<IHeuristic>();
 		
         p.brain = new HeuristicGeneticLearner(

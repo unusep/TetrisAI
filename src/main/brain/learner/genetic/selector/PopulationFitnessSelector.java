@@ -12,7 +12,7 @@ public class PopulationFitnessSelector<E> implements IPopulationSelector<E> {
         Collections.sort(genePool, Collections.reverseOrder());
         int size = genePool.size();
         ArrayList<Gene<E>> result = new ArrayList<Gene<E>>();
-        for (int i = 0; i < num; i++){
+        for (int i = 1; i <= num; i++){
             result.add(genePool.get(size - i));
         }
         return result;

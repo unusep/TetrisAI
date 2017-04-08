@@ -1,7 +1,5 @@
 package main.tetris.heuristics;
 
-import main.tetris.engine.TetrisSimulator;
-
 public class BumpinessHeuristic implements IHeuristic {
 
     @Override

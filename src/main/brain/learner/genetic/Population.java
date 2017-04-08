@@ -78,10 +78,11 @@ public class Population<E> {
     public void nextGeneration() {
         evaluateFitness(genePool);
         normaliseFitness(genePool);
-        ArrayList<Gene<E>> parents = selectElite(genePool, (int) Math.round(PERCENTAGE_TO_KILL * genePool.size()));
+        int numBabies = (int) (PERCENTAGE_TO_KILL * (double) genePool.size()); 
+        ArrayList<Gene<E>> parents = selectElite(genePool, numBabies);
         ArrayList<Gene<E>> babies = crossOver(parents);
         mutate(babies);
-        cull(genePool, (int) Math.round(PERCENTAGE_TO_KILL * genePool.size()));
+        cull(genePool, numBabies);
         genePool.addAll(babies);
         printBestGene();
     }

@@ -9,7 +9,7 @@ public class PopulationFitnessSelector<E> implements IPopulationSelector<E> {
 
     @Override
     public ArrayList<Gene<E>> selectElite(ArrayList<Gene<E>> genePool, int num) {
-        Collections.sort(genePool, Collections.reverseOrder());
+        Collections.sort(genePool);
         int size = genePool.size();
         ArrayList<Gene<E>> result = new ArrayList<Gene<E>>();
         for (int i = 1; i <= num; i++){

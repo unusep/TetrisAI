@@ -28,7 +28,14 @@ public class Gene<E> implements Comparable<Gene<E>> {
 
     @Override
     public int compareTo(Gene<E> o) {
-        return (int) (this.fitness - o.fitness);
+        double res = this.fitness - o.fitness;
+        if (res == 0){
+            return 0;
+        } else if (res < 0){
+            return -1;
+        } else {
+            return 1;
+        }
     }
     
     public ArrayList<E> getChromsomes(){
@@ -59,7 +66,7 @@ public class Gene<E> implements Comparable<Gene<E>> {
         DecimalFormat decimalFormat = new DecimalFormat("#.0000");
         String res = "";
         for (Double weight : chromosomesWeights){
-            res += decimalFormat.format(weight) + " ";
+            res += new String(decimalFormat.format(weight)) + " ";
         }
         res += decimalFormat.format(fitness);
         return res;

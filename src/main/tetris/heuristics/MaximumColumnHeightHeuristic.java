@@ -10,5 +10,9 @@ public class MaximumColumnHeightHeuristic implements IHeuristic {
         }
         return max;
     }
-
+    
+    @Override
+    public String toString(){
+        return "MaximumColumnHeightHeuristic";
+    }
 }

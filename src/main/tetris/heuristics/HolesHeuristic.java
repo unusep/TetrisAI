@@ -16,4 +16,8 @@ public class HolesHeuristic implements IHeuristic {
         return count;
     }
 
+    @Override
+    public String toString(){
+        return "HolesHeuristic";
+    }
 }

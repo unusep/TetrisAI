@@ -6,5 +6,10 @@ public class RowsClearedHeuristic implements IHeuristic {
     public double getValue(boolean[][] board, int[] top, int rowsCleared) {
         return rowsCleared;
     }
+    
+    @Override
+    public String toString(){
+        return "RowsClearedHeuristic";
+    }
 
 }

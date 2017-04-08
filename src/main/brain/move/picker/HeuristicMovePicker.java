@@ -3,7 +3,6 @@ package main.brain.move.picker;
 import java.util.ArrayList;
 
 import main.tetris.engine.State;
-import main.tetris.engine.TetrisSimulator;
 import main.tetris.heuristics.IHeuristic;
 
 /**
@@ -13,7 +12,6 @@ import main.tetris.heuristics.IHeuristic;
 public class HeuristicMovePicker implements IMovePicker {
     private ArrayList<IHeuristic> heuristics;
     private ArrayList<Double> weights;
-    private final double LOST_SCORE = Double.MIN_VALUE;
     
     public HeuristicMovePicker(ArrayList<Double> weights, ArrayList<IHeuristic> heuristics) {
         this.weights = weights;

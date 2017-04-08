@@ -43,7 +43,10 @@ public class Population<E> {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(file));
             
-            if (!genePool.isEmpty()) bw.write(genePool.get(0).getHeaders());
+            if (!genePool.isEmpty()){
+                bw.write(genePool.get(0).getHeaders());
+                bw.newLine();
+            }
             
             for (Gene<E> gene : genePool){
                 bw.write(gene.toString());
@@ -77,7 +80,7 @@ public class Population<E> {
      */
     public void nextGeneration() {
         evaluateFitness(genePool);
-        normaliseFitness(genePool);
+//        normaliseFitness(genePool);
         int numBabies = (int) (PERCENTAGE_TO_KILL * (double) genePool.size()); 
         ArrayList<Gene<E>> parents = selectElite(genePool, numBabies);
         ArrayList<Gene<E>> babies = crossOver(parents);
@@ -90,6 +93,7 @@ public class Population<E> {
     int printCount = 0;
     private void printBestGene() {
         Gene<E> best = getFittest();
+        printCount++;
         System.out.println("Turn " + printCount + " Best Fitness: " + best.getFitness() + " Weights: " + best.getChromosomeWeights());
     }
 
@@ -174,17 +178,20 @@ public class Population<E> {
         ArrayList<Gene<E>> genes = new ArrayList<Gene<E>>(populationSize); 
         for (int i = 0; i < populationSize; i++){
             ArrayList<Double> weights = new ArrayList<Double>(chromosomes.size());
-            weights.add(randomDouble(-1, 1));
+            for (int j = 0; j < chromosomes.size(); j++){
+                weights.add(randomDouble(-1, 1));
+            }
             Gene<E> gene = new Gene<E>(chromosomes, weights);
             gene.setFitness(fitness);
             genes.add(gene);
+            System.out.println("Added gene: " + gene);
         }
         return genes;
     }
     
     private double randomDouble(double min, double max){
         Random randomGenerator = new Random(); 
-        return min + (randomGenerator.nextDouble() * max - min); 
+        return min + (randomGenerator.nextDouble() * (max - min)); 
     }
     
     

@@ -2,12 +2,25 @@ package main.tetris.engine;
 
 import java.awt.Color;
 
-public class TetrisSimulator extends State {
+public class TetrisSimulator {
+    private int oldTurn;
+    private boolean oldLost;
+    private int[] oldTop;
+    private int[][] oldField;
+    private int oldCleared;
+    private int oldNextPiece;
+    
     public static final int COLS = 10;
     public static final int ROWS = 21;
     public static final int N_PIECES = 7;
 
+    
+
     public boolean lost = false;
+    
+    
+    
+
     
     public TLabel label;
     
@@ -21,14 +34,11 @@ public class TetrisSimulator extends State {
     //0 means empty
     private int[] top = new int[COLS];
     
+    
     //number of next piece
     protected int nextPiece;
-    private int oldTurn;
-    private boolean oldLost;
-    private int[] oldTop;
-    private int[][] oldField;
-    private int oldCleared;
-    private int oldNextPiece;
+    
+    
     
     //all legal moves - first index is piece type - then a list of 2-length arrays
     protected static int[][][] legalMoves = new int[N_PIECES][][];
@@ -81,7 +91,7 @@ public class TetrisSimulator extends State {
     };
     
     //initialize legalMoves
-    public TetrisSimulator() {
+    {
         //for each piece type
         for(int i = 0; i < N_PIECES; i++) {
             //figure number of legal moves
@@ -105,6 +115,7 @@ public class TetrisSimulator extends State {
         }
     
     }
+    
     
     public int[][] getField() {
         return field;
@@ -150,11 +161,35 @@ public class TetrisSimulator extends State {
     public int getTurnNumber() {
         return turn;
     }
+
     
+    //constructor
+    public TetrisSimulator() {
+        nextPiece = randomPiece();
+    }
+    
+    public TetrisSimulator(State s) {
+        this.field = s.getField().clone();
+        this.top = s.getTop().clone();
+        TetrisSimulator.pOrients = State.getpOrients();
+        TetrisSimulator.pWidth = State.getpWidth();
+        TetrisSimulator.pHeight = State.getpHeight();
+        TetrisSimulator.pBottom = State.getpBottom();
+        TetrisSimulator.pTop = State.getpTop();
+        this.nextPiece = s.getNextPiece();
+        this.lost = s.hasLost();
+        this.cleared = s.getRowsCleared();
+        this.turn = s.getNextPiece();
+        TetrisSimulator.legalMoves = State.legalMoves;
+    }
+
     //random integer, returns 0-6
     private int randomPiece() {
         return (int)(Math.random()*N_PIECES);
     }
+    
+
+
     
     //gives legal moves for 
     public int[][] legalMoves() {
@@ -295,6 +330,7 @@ public class TetrisSimulator extends State {
         label.line(COLS, 0, COLS, ROWS+5);
     }
 
+
     /**
      * Saves the state of the last move
      */
@@ -306,7 +342,7 @@ public class TetrisSimulator extends State {
         this.oldCleared = cleared;
         this.oldNextPiece = nextPiece;
     }
-
+    
     /**
      * Undoes the last move if it has been saved
      * Returns 
@@ -319,66 +355,6 @@ public class TetrisSimulator extends State {
         cleared = oldCleared;
         nextPiece = oldNextPiece;
     }
-    
-
-    private int performMove(int pieceIndex, int rotationIndex, int leftPosition) {
-
-        //height if the first column makes contact
-        int height = top[leftPosition] - pBottom[pieceIndex][rotationIndex][0];
-        //for each column beyond the first in the piece
-        for (int c = 0; c < pWidth[pieceIndex][rotationIndex]; c++) {
-            height = Math.max(height, top[leftPosition + c] - pBottom[pieceIndex][rotationIndex][c]);
-        }
-
-        //check if game ended
-        if (height + pHeight[pieceIndex][rotationIndex] >= NUM_ROWS) {
-            return -1;
-        }
-
-        //for each column in the piece - fill in the appropriate blocks
-        for (int i = 0; i < pWidth[pieceIndex][rotationIndex]; i++) {
-
-            //from bottom to top of brick
-            for (int h = height + pBottom[pieceIndex][rotationIndex][i]; h < height + pTop[pieceIndex][rotationIndex][i]; h++) {
-                board[h][i + leftPosition] = true;
-            }
-        }
-
-        //adjust top
-        for (int c = 0; c < pWidth[pieceIndex][rotationIndex]; c++) {
-            top[leftPosition + c] = height + pTop[pieceIndex][rotationIndex][c];
-        }
-
-        int rowsCleared = 0;
-
-        //check for full rows - starting at the top
-        for (int r = height + pHeight[pieceIndex][rotationIndex] - 1; r >= height; r--) {
-            //check all columns in the row
-            boolean full = true;
-            for (int c = 0; c < NUM_COLS; c++) {
-                if (!board[r][c]) {
-                    full = false;
-                    break;
-                }
-            }
-            //if the row was full - remove it and slide above stuff down
-            if (full) {
-                rowsCleared++;
-                //for each column
-                for (int c = 0; c < NUM_COLS; c++) {
-
-                    //slide down all bricks
-                    for (int i = r; i < top[c]; i++) {
-                        board[i][c] = board[i + 1][c];
-                    }
-                    //lower the top
-                    top[c]--;
-                    while (top[c] >= 1 && !board[top[c] - 1][c]) top[c]--;
-                }
-            }
-        }
-        return rowsCleared;
-    };
 
     
 }

@@ -18,8 +18,8 @@ public class PlayerSkeleton {
     public static final String POPULATION_FILEPATH = "population.txt";
     private ILearner brain;
     
-	public int[] pickMove(TetrisSimulator simulator, int[][] legalMoves) {
-		return brain.getMovePicker().pickBest(simulator, legalMoves);
+	public int[] pickMove(State simulator, int[][] legalMoves) {
+		return brain.getMovePicker().pickBest(simulator);
 	}
 	
 	/**
@@ -27,7 +27,7 @@ public class PlayerSkeleton {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		TetrisSimulator s = new TetrisSimulator();
+		State s = new State();
 		new TFrame(s);
 		PlayerSkeleton p = new PlayerSkeleton();
 		
@@ -62,7 +62,7 @@ public class PlayerSkeleton {
         p.brain.trainLearner(trainingIterations);
         
 		while(!s.hasLost()) {
-			s.makeMove(p.pickMove(s,s.legalMoves()));
+			s.makeMove(p.pickMove(s, s.legalMoves()));
 			s.draw();
 			s.drawNext(0,0);
 			try {

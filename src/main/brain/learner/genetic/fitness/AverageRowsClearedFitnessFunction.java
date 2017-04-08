@@ -3,7 +3,7 @@ package main.brain.learner.genetic.fitness;
 import main.brain.learner.genetic.Gene;
 import main.brain.move.picker.HeuristicMovePicker;
 import main.brain.move.picker.IMovePicker;
-import main.tetris.engine.TetrisSimulator;
+import main.tetris.engine.State;
 import main.tetris.heuristics.IHeuristic;
 
 public class AverageRowsClearedFitnessFunction implements IFitnessFunction<IHeuristic> {
@@ -26,11 +26,12 @@ public class AverageRowsClearedFitnessFunction implements IFitnessFunction<IHeur
     public double evaluateFitness(Gene<IHeuristic> gene) {
         double totalFitness = 0.0;
         for (int i = 0; i < numGames; i++){
-            TetrisSimulator simulator = new TetrisSimulator();
+            State simulator = new State();
+            
             IMovePicker movePicker = new HeuristicMovePicker(gene.getChromosomeWeights(), gene.getChromsomes());
             for (int j = 0; j < numPieces; j++){
                 if (simulator.hasLost()) break;
-                int[] bestMove = movePicker.pickBest(simulator, simulator.legalMoves());
+                int[] bestMove = movePicker.pickBest(simulator);
                 simulator.makeMove(bestMove);
             }
             totalFitness += simulator.getRowsCleared();

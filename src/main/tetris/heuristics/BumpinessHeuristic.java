@@ -5,11 +5,10 @@ import main.tetris.engine.TetrisSimulator;
 public class BumpinessHeuristic implements IHeuristic {
 
     @Override
-    public double getValue(TetrisSimulator state) {
+    public double getValue(boolean[][] board, int[] top, int rowsCleared) {
         double count = 0;
-        for (int col = 1; col < TetrisSimulator.COLS; col++){
-            int[] topRows = state.getTop();
-            count += Math.abs(topRows[col - 1] - topRows[col]);
+        for (int col = 1; col < board[0].length; col++){
+            count += Math.abs(top[col-1] - top[col]);
         }
         return count;
     }

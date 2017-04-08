@@ -1,6 +1,6 @@
 package main.brain.move.picker;
 
-import main.tetris.engine.TetrisSimulator;
+import main.tetris.engine.State;
 
 /**
  * An instance of IMovePicker is an object that 
@@ -9,11 +9,10 @@ import main.tetris.engine.TetrisSimulator;
 public interface IMovePicker {
 
     /**
-     * Given a move, 
-     * @param simulator
-     * @param legalMoves
-     * @return
+     * Given a state return the best move to make
+     * @param state
+     * @return move
      */
-    public int[] pickBest(TetrisSimulator simulator, int[][] legalMoves);
+    public int[] pickBest(State s);
 
 }

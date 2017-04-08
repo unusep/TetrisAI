@@ -22,7 +22,7 @@ public class PopulationFitnessSelector<E> implements IPopulationSelector<E> {
     public void cull(ArrayList<Gene<E>> genePool, int num) {
         Collections.sort(genePool);
         int size = genePool.size();
-        for (int i = 0; i < num; i++){
+        for (int i = 1; i <= num; i++){
             genePool.remove(size - i);
         }
     }

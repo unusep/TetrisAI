@@ -16,7 +16,7 @@ public class SimpleCrossover implements ICrossoverOperator<IHeuristic>{
         ArrayList<IHeuristic> heuristics = genes.get(0).getChromsomes();
         
         int size = genes.size();
-        for (int i = 0; i < size/2; i++){
+        for (int i = 1; i <= size/2; i++){
             ArrayList<Double> fatherChromosomeWeights = genes.get(i).getChromosomeWeights();
             ArrayList<Double> motherChromosomeWeights = genes.get(size - i).getChromosomeWeights();
             Pair<ArrayList<Double>, ArrayList<Double>> children = cross(fatherChromosomeWeights, motherChromosomeWeights);
@@ -34,7 +34,7 @@ public class SimpleCrossover implements ICrossoverOperator<IHeuristic>{
         int size = fatherChromosomeWeights.size();
         int swapSize = (int) (size * AMOUNT_TO_SWAP);
         ArrayList<Integer> numbersToSwap = new ArrayList<Integer>(size); 
-        for (int i = 0; i < size; i++){
+        for (int i = 1; i <= size; i++){
             numbersToSwap.add(i);
         }
         ArrayList<Double> weights1 = new ArrayList<Double>(fatherChromosomeWeights);

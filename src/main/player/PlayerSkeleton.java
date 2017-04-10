@@ -13,6 +13,7 @@ import main.tetris.heuristics.HolesHeuristic;
 import main.tetris.heuristics.IHeuristic;
 import main.tetris.heuristics.MaximumColumnHeightHeuristic;
 import main.tetris.heuristics.RowsClearedHeuristic;
+import main.tetris.heuristics.SumOfHeightOfColumnsHeuristic;
 
 public class PlayerSkeleton {
     public static final String POPULATION_FILEPATH = "population.txt";
@@ -28,7 +29,7 @@ public class PlayerSkeleton {
 	 */
 	public static void main(String[] args) {
 		State s = new State();
-		new TFrame(s);
+//		new TFrame(s);
 		PlayerSkeleton p = new PlayerSkeleton();
 		
 		// set up genetic learner variables
@@ -39,6 +40,7 @@ public class PlayerSkeleton {
         int trainingNumGames = 1; // the number of games to play when evaluating the fitness function (will take the average fitness level) 
 		
 		ArrayList<IHeuristic> heuristics = new ArrayList<IHeuristic>();
+		heuristics.add(new SumOfHeightOfColumnsHeuristic());
 		heuristics.add(new BumpinessHeuristic());
 		heuristics.add(new HolesHeuristic());
 		heuristics.add(new MaximumColumnHeightHeuristic());
@@ -61,16 +63,16 @@ public class PlayerSkeleton {
         
         p.brain.trainLearner(trainingIterations);
         
-		while(!s.hasLost()) {
-			s.makeMove(p.pickMove(s, s.legalMoves()));
-			s.draw();
-			s.drawNext(0,0);
-			try {
-				Thread.sleep(300);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+//		while(!s.hasLost()) {
+//			s.makeMove(p.pickMove(s, s.legalMoves()));
+//			s.draw();
+//			s.drawNext(0,0);
+//			try {
+//				Thread.sleep(300);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//		}
 		System.out.println("You have completed "+s.getRowsCleared()+" rows.");
 	}
 	

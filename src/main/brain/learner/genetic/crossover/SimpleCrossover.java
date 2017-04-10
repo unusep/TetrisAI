@@ -8,10 +8,11 @@ import main.brain.learner.genetic.Gene;
 import main.tetris.heuristics.IHeuristic;
 
 public class SimpleCrossover implements ICrossoverOperator<IHeuristic>{
-    private static final double AMOUNT_TO_SWAP = 0.3; 
+    private static final double AMOUNT_TO_SWAP = 0.5; 
 
     @Override
     public ArrayList<Gene<IHeuristic>> crossover(ArrayList<Gene<IHeuristic>> genes) {
+        if (genes.size() < 2) return new ArrayList<Gene<IHeuristic>>(genes);
         ArrayList<Gene<IHeuristic>> babies = new ArrayList<Gene<IHeuristic>>();
         ArrayList<IHeuristic> heuristics = genes.get(0).getChromsomes();
         
@@ -32,7 +33,7 @@ public class SimpleCrossover implements ICrossoverOperator<IHeuristic>{
     private Pair<ArrayList<Double>, ArrayList<Double>> cross(
             ArrayList<Double> fatherChromosomeWeights, ArrayList<Double> motherChromosomeWeights) {
         int size = fatherChromosomeWeights.size();
-        int swapSize = (int) (size * AMOUNT_TO_SWAP);
+        int swapSize = (int) ((double) size * AMOUNT_TO_SWAP);
         ArrayList<Integer> numbersToSwap = new ArrayList<Integer>(size); 
         for (int i = 1; i <= size; i++){
             numbersToSwap.add(i);
@@ -47,8 +48,8 @@ public class SimpleCrossover implements ICrossoverOperator<IHeuristic>{
     }
 
     private void swap(int i, ArrayList<Double> weights1, ArrayList<Double> weights2) {
-        Double save = weights1.get(i);
-        weights1.set(i, weights2.get(i));
+        Double save = new Double(weights1.get(i));
+        weights1.set(i, new Double(weights2.get(i)));
         weights2.set(i, save);
     }
 

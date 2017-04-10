@@ -20,7 +20,7 @@ public class HeuristicMovePicker implements IMovePicker {
 
     @Override
     public int[] pickBest(State s) {
-        double bestValue = Double.MIN_VALUE;
+        double bestValue = -Double.MAX_VALUE;
         
         boolean[][] newField = new boolean[State.ROWS][State.COLS];
         int[] newTop = new int[State.COLS];
@@ -35,7 +35,7 @@ public class HeuristicMovePicker implements IMovePicker {
             int rot = legalMoves[i][State.ORIENT];
             int pos = legalMoves[i][State.SLOT];
             int rowsCleared = performMove(s, newField, newTop, nextPiece, rot, pos);
-            score = evaluateBoard(newField, newTop, rowsCleared);
+            score = evaluateBoard(newField, newTop, s.getRowsCleared() + rowsCleared);
             if (score > bestValue){
                 bestValue = score;
                 bestRot = rot;
@@ -66,7 +66,7 @@ public class HeuristicMovePicker implements IMovePicker {
 
         // check if game ended
         if (height + State.getpHeight()[piece][rot] >= State.ROWS) {
-            return -10;
+            return 0;
         }
 
         // for each column in the piece - fill in the appropriate blocks

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -66,7 +67,8 @@ public class Population<E> {
      * @return fittest gene
      */
     public Gene<E> getFittest() {
-        return populationSelector.selectElite(genePool, 1).get(0);
+        Collections.sort(genePool);
+        return genePool.get(genePool.size() - 1);
     }
     
     /**
@@ -85,7 +87,7 @@ public class Population<E> {
         ArrayList<Gene<E>> parents = selectElite(genePool, numBabies);
         ArrayList<Gene<E>> babies = crossOver(parents);
         mutate(babies);
-        cull(genePool, numBabies);
+        cull(genePool, babies.size());
         genePool.addAll(babies);
         printBestGene();
     }
@@ -218,7 +220,7 @@ public class Population<E> {
     /**
      * Select the genes that are allowed to breed using the population selector
      * @param genePool
-     * @param num number to kill
+     * @param num the maximum number of elites to select
      * @return the genes that are allowed to breed
      */
     private ArrayList<Gene<E>> selectElite(ArrayList<Gene<E>> genes, int num) {
@@ -231,8 +233,10 @@ public class Population<E> {
      */
     private void evaluateFitness(ArrayList<Gene<E>> genes) {
         for (Gene<E> gene : genePool){
-            double fitness = fitnessFunction.evaluateFitness(gene);
-            gene.setFitness(fitness);
+            if (gene.getFitness() == Gene.INITIAL_FITNESS){
+                double fitness = fitnessFunction.evaluateFitness(gene);
+                gene.setFitness(fitness);
+            }
         }
     }
 

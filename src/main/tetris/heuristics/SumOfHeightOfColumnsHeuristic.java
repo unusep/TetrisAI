@@ -11,4 +11,8 @@ public class SumOfHeightOfColumnsHeuristic implements IHeuristic {
         return count;
     }
 
+    @Override
+    public String toString(){
+        return "SumOfHeightOfColumnsHeuristic";
+    }
 }

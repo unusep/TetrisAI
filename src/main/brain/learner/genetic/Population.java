@@ -232,7 +232,7 @@ public class Population<E> {
      * @param genes
      */
     private void evaluateFitness(ArrayList<Gene<E>> genes) {
-        for (Gene<E> gene : genePool){
+        for (Gene<E> gene : genes){
             if (gene.getFitness() == Gene.INITIAL_FITNESS){
                 double fitness = fitnessFunction.evaluateFitness(gene);
                 gene.setFitness(fitness);

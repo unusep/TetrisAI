@@ -21,7 +21,7 @@ import main.brain.learner.genetic.selector.*;
  * TODO: Abstract file functions to facilitate SLAP
  */
 public class Population<E> {
-    private final double PERCENTAGE_TO_KILL = 0.2;
+    private static double PERCENTAGE_TO_KILL = 0.2;
     
     private ArrayList<Gene<E>> genePool;
     private ICrossoverOperator<E> crossOverOperator;
@@ -30,9 +30,10 @@ public class Population<E> {
     private IPopulationSelector<E> populationSelector;
     private String savePath;
     
-    public Population(String filepath, ArrayList<E> chromosomes, int populationSize){
+    public Population(String filepath, ArrayList<E> chromosomes, int populationSize, double percToCull){
         this.savePath = filepath;
         this.genePool = instantiateGenePool(filepath, chromosomes, populationSize);
+        PERCENTAGE_TO_KILL = percToCull;
     }
 
     /**

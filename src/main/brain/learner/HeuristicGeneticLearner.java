@@ -28,9 +28,10 @@ public class HeuristicGeneticLearner implements ILearner {
             ICrossoverOperator<IHeuristic> crossOverOperator, 
             IFitnessFunction<IHeuristic> fitnessFunction, 
             IMutationOperator<IHeuristic> mutationOperator, 
-            IPopulationSelector<IHeuristic> populationSelector
+            IPopulationSelector<IHeuristic> populationSelector,
+            double PERCENTAGE_TO_CULL
             ){
-        this.population = new Population<IHeuristic>(pathToPopulation, heuristics, populationSize);
+        this.population = new Population<IHeuristic>(pathToPopulation, heuristics, populationSize, PERCENTAGE_TO_CULL);
         population.setCrossOverOperator(crossOverOperator);
         population.setFitnessFunction(fitnessFunction);
         population.setmutationOperator(mutationOperator);

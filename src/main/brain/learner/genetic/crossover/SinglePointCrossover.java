@@ -2,14 +2,13 @@ package main.brain.learner.genetic.crossover;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 import javafx.util.Pair;
 import main.brain.learner.genetic.Gene;
 import main.tetris.heuristics.IHeuristic;
 
-public class SimpleCrossover implements ICrossoverOperator<IHeuristic>{
-    private static final double AMOUNT_TO_SWAP = 0.5; 
-
+public class SinglePointCrossover implements ICrossoverOperator<IHeuristic>{
     @Override
     public ArrayList<Gene<IHeuristic>> crossover(ArrayList<Gene<IHeuristic>> genes) {
         if (genes.size() < 2) return new ArrayList<Gene<IHeuristic>>(genes);
@@ -33,24 +32,24 @@ public class SimpleCrossover implements ICrossoverOperator<IHeuristic>{
     private Pair<ArrayList<Double>, ArrayList<Double>> cross(
             ArrayList<Double> fatherChromosomeWeights, ArrayList<Double> motherChromosomeWeights) {
         int size = fatherChromosomeWeights.size();
-        int swapSize = (int) ((double) size * AMOUNT_TO_SWAP);
-        ArrayList<Integer> numbersToSwap = new ArrayList<Integer>(size); 
-        for (int i = 1; i <= size; i++){
-            numbersToSwap.add(i);
+        Random random = new Random();
+        int crossoverPoint = random.nextInt(size);
+        ArrayList<Double> weights1 = new ArrayList<Double>(size);
+        ArrayList<Double> weights2 = new ArrayList<Double>(size);
+        
+        for (int i = 0; i < crossoverPoint; i++){
+            double fChromosome = fatherChromosomeWeights.get(i);
+            double mChromosome = motherChromosomeWeights.get(i);  
+            weights1.add(fChromosome);
+            weights2.add(mChromosome);
         }
-        ArrayList<Double> weights1 = new ArrayList<Double>(fatherChromosomeWeights);
-        ArrayList<Double> weights2 = new ArrayList<Double>(motherChromosomeWeights); 
-        Collections.shuffle(numbersToSwap);
-        for (int i = 0; i < swapSize; i++){
-            swap(i, weights1, weights2);
+        for (int i = crossoverPoint; i < size; i++){
+            double fChromosome = fatherChromosomeWeights.get(i);
+            double mChromosome = motherChromosomeWeights.get(i);  
+            weights2.add(fChromosome);
+            weights1.add(mChromosome);
         }
         return new Pair<ArrayList<Double>, ArrayList<Double>>(weights1, weights2);
-    }
-
-    private void swap(int i, ArrayList<Double> weights1, ArrayList<Double> weights2) {
-        Double save = new Double(weights1.get(i));
-        weights1.set(i, new Double(weights2.get(i)));
-        weights2.set(i, save);
     }
 
 }

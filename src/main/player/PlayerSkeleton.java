@@ -37,11 +37,15 @@ public class PlayerSkeleton {
 		PlayerSkeleton p = new PlayerSkeleton();
 		
 		// set up genetic learner variables
-		int populationSize = Integer.parseInt(args[0]);
-		int trainingIterations = Integer.parseInt(args[1]);
+		int TRAINING_MAX_PIECES = 10000;
+		int FITNESS_BEST_OF_NUM_GAMES = 1;
 		
-        int trainingNumPieces = 10000; // the number of pieces to play before we cut off the fitness function
-        int trainingNumGames = 1; // the number of games to play when evaluating the fitness function (will take the average fitness level) 
+		int POPULATION_SIZE = 1000;
+		int NUMBER_OF_GENERATIONS = 100;
+		double GENE_MUTATION_PROBABILITY = 0.2; // 0.0-1.0
+		double PERCENTAGE_TO_CULL = 0.2; // 0.0-0.49
+		
+		// end of set up genetic learner variables 
 		
 		ArrayList<IHeuristic> heuristics = new ArrayList<IHeuristic>();
         heuristics.add(new NonLinearLinesClearedHeuristic());
@@ -53,23 +57,23 @@ public class PlayerSkeleton {
         heuristics.add(new WallHuggingCoefficientHeuristic());
         heuristics.add(new FloorHuggingCoefficientHeuristic());
         heuristics.add(new FlatteningCoefficientHeuristic());
-		ICrossoverOperator<IHeuristic> crossOverOperator = new SimpleCrossover();
+		ICrossoverOperator<IHeuristic> crossOverOperator = new SinglePointCrossover();
 		IFitnessFunction<IHeuristic> fitnessFunction 
-		    = new AverageRowsClearedFitnessFunction(trainingNumPieces, trainingNumGames);
-		IMutationOperator<IHeuristic> mutationOperator = new GaussianMutation<IHeuristic>();
+		    = new AverageRowsClearedFitnessFunction(TRAINING_MAX_PIECES, FITNESS_BEST_OF_NUM_GAMES);
+		IMutationOperator<IHeuristic> mutationOperator = new GaussianMutation<IHeuristic>(GENE_MUTATION_PROBABILITY);
 		IPopulationSelector<IHeuristic> populationSelector = new TruncationFitnessSelector<IHeuristic>();
 		
         p.brain = new HeuristicGeneticLearner(
-		        populationSize, 
+                POPULATION_SIZE, 
 		        POPULATION_FILEPATH, 
 		        heuristics, 
 		        crossOverOperator, 
 		        fitnessFunction, 
 		        mutationOperator, 
-		        populationSelector
-		        );
+		        populationSelector,
+		        PERCENTAGE_TO_CULL);
         
-        p.brain.trainLearner(trainingIterations);
+        p.brain.trainLearner(NUMBER_OF_GENERATIONS);
         
 //		while(!s.hasLost()) {
 //			s.makeMove(p.pickMove(s, s.legalMoves()));

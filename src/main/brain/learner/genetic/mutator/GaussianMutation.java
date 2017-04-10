@@ -6,7 +6,12 @@ import java.util.Random;
 import main.brain.learner.genetic.Gene;
 
 public class GaussianMutation<E> implements IMutationOperator<E> {
-    private static final double MUTATION_PROBABILITY = 0.20; 
+    private static double MUTATION_PROBABILITY = 0.20; 
+    
+    public GaussianMutation(double mutation){
+        MUTATION_PROBABILITY = mutation;
+    }
+    
     
     @Override
     public void mutate(Gene<E> gene) {

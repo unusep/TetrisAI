@@ -22,6 +22,7 @@ import main.brain.learner.genetic.selector.*;
  */
 public class Population<E> {
     private static double PERCENTAGE_TO_KILL = 0.2;
+    private static double MUTATION_PROBABILITY = 0.2;
     
     private ArrayList<Gene<E>> genePool;
     private ICrossoverOperator<E> crossOverOperator;
@@ -30,10 +31,11 @@ public class Population<E> {
     private IPopulationSelector<E> populationSelector;
     private String savePath;
     
-    public Population(String filepath, ArrayList<E> chromosomes, int populationSize, double percToCull){
+    public Population(String filepath, ArrayList<E> chromosomes, int populationSize, double percToCull, double mutationProbability){
         this.savePath = filepath;
         this.genePool = instantiateGenePool(filepath, chromosomes, populationSize);
         PERCENTAGE_TO_KILL = percToCull;
+        MUTATION_PROBABILITY = mutationProbability;
     }
 
     /**
@@ -199,8 +201,12 @@ public class Population<E> {
     
     
     private void mutate(ArrayList<Gene<E>> elites, ArrayList<Gene<E>> genes) {
+        Random ran = new Random();
         for (Gene<E> gene : genes){
-            if(!elites.contains(genes)) mutationOperator.mutate(gene);
+            if (ran.nextDouble() < MUTATION_PROBABILITY) {
+                mutationOperator.mutate(gene);
+                gene.mutated = true;
+            }
         }
     }
 
@@ -234,8 +240,11 @@ public class Population<E> {
      */
     private void evaluateFitness(ArrayList<Gene<E>> genes) {
         for (Gene<E> gene : genes){
-            double fitness = fitnessFunction.evaluateFitness(gene);
-            gene.setFitness(fitness);
+            if (gene.mutated){
+                double fitness = fitnessFunction.evaluateFitness(gene);
+                gene.setFitness(fitness);
+            }
+            gene.mutated = false;
         }
     }
 

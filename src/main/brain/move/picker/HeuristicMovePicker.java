@@ -29,6 +29,7 @@ public class HeuristicMovePicker implements IMovePicker {
 
         int nextPiece = s.getNextPiece();
         int[][] legalMoves = s.legalMoves();
+        int oldRowsCleared = s.getRowsCleared(); 
         
         for (int i = 0; i < legalMoves.length; i++) {
             double score = 0.0;
@@ -52,7 +53,7 @@ public class HeuristicMovePicker implements IMovePicker {
             int pieceIndex = s.getNextPiece();
             int rotationIndex = legalMoves[i][0];
             int leftPosition = legalMoves[i][1];
-            score = evaluateBoard(newField, newTop, s.getRowsCleared() + rowsCleared, oldField, s.getRowsCleared(), pTop, pBottom, pWidth, pieceIndex,
+            score = evaluateBoard(newField, newTop, oldRowsCleared + rowsCleared, oldField, oldRowsCleared, pTop, pBottom, pWidth, pieceIndex,
                     rotationIndex, leftPosition);
             if (score > bestValue){
                 bestValue = score;

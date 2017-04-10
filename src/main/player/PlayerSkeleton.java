@@ -33,7 +33,7 @@ public class PlayerSkeleton {
 	 */
 	public static void main(String[] args) {
 		State s = new State();
-//		new TFrame(s);
+		new TFrame(s);
 		PlayerSkeleton p = new PlayerSkeleton();
 		
 		// set up genetic learner variables
@@ -42,8 +42,9 @@ public class PlayerSkeleton {
 		
 		int POPULATION_SIZE = 1000;
 		int NUMBER_OF_GENERATIONS = 100;
-		double GENE_MUTATION_PROBABILITY = 0.2; // 0.0-1.0
-		double PERCENTAGE_TO_CULL = 0.2; // 0.0-0.49
+		double PERCENTAGE_TO_CULL = 0.3; // 0.0-0.49 what percentage of the population to cull
+		double CHROMOSOME_MUTATION_PROBABILITY = 0.2; // 0.0-1.0 how likely it is for a particular chromosome in a gene to mutate 
+		double GENE_MUTATION_PROBABILITY = 0.1; // how like it is for a particular gene in the population to be selected for mutation
 		
 		// end of set up genetic learner variables 
 		
@@ -60,7 +61,7 @@ public class PlayerSkeleton {
 		ICrossoverOperator<IHeuristic> crossOverOperator = new SinglePointCrossover();
 		IFitnessFunction<IHeuristic> fitnessFunction 
 		    = new AverageRowsClearedFitnessFunction(TRAINING_MAX_PIECES, FITNESS_BEST_OF_NUM_GAMES);
-		IMutationOperator<IHeuristic> mutationOperator = new GaussianMutation<IHeuristic>(GENE_MUTATION_PROBABILITY);
+		IMutationOperator<IHeuristic> mutationOperator = new UniformMutation<IHeuristic>(CHROMOSOME_MUTATION_PROBABILITY);
 		IPopulationSelector<IHeuristic> populationSelector = new TruncationFitnessSelector<IHeuristic>();
 		
         p.brain = new HeuristicGeneticLearner(
@@ -71,20 +72,21 @@ public class PlayerSkeleton {
 		        fitnessFunction, 
 		        mutationOperator, 
 		        populationSelector,
-		        PERCENTAGE_TO_CULL);
+		        PERCENTAGE_TO_CULL,
+		        GENE_MUTATION_PROBABILITY);
         
         p.brain.trainLearner(NUMBER_OF_GENERATIONS);
         
-//		while(!s.hasLost()) {
-//			s.makeMove(p.pickMove(s, s.legalMoves()));
-//			s.draw();
-//			s.drawNext(0,0);
-//			try {
-//				Thread.sleep(300);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//		}
+		while(!s.hasLost()) {
+			s.makeMove(p.pickMove(s, s.legalMoves()));
+			s.draw();
+			s.drawNext(0,0);
+			try {
+				Thread.sleep(300);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		System.out.println("You have completed "+s.getRowsCleared()+" rows.");
 	}
 	

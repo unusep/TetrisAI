@@ -8,7 +8,7 @@ import java.util.Comparator;
  * Gene stores chromosomes of type E and the weights of each of its chromosome
  */
 public class Gene<E> implements Comparable<Gene<E>> {
-    public static final double INITIAL_FITNESS = -Double.MAX_VALUE;
+    public static final double INITIAL_FITNESS = 0;
     private ArrayList<Double> chromosomesWeights;
     private ArrayList<E> chromosomes;
     private double fitness;

@@ -4,6 +4,7 @@ import main.brain.learner.genetic.Gene;
 import main.brain.move.picker.HeuristicMovePicker;
 import main.brain.move.picker.IMovePicker;
 import main.tetris.engine.State;
+import main.tetris.engine.TFrame;
 import main.tetris.heuristics.IHeuristic;
 
 public class AverageRowsClearedFitnessFunction implements IFitnessFunction<IHeuristic> {
@@ -36,7 +37,7 @@ public class AverageRowsClearedFitnessFunction implements IFitnessFunction<IHeur
                 if (simulator.hasLost()) break;
                 int[] bestMove = movePicker.pickBest(simulator);
                 simulator.makeMove(bestMove);
-                
+//                
 //                simulator.draw();
 //                simulator.drawNext(0,0);
 //                try {

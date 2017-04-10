@@ -35,7 +35,25 @@ public class HeuristicMovePicker implements IMovePicker {
             int rot = legalMoves[i][State.ORIENT];
             int pos = legalMoves[i][State.SLOT];
             int rowsCleared = performMove(s, newField, newTop, nextPiece, rot, pos);
-            score = evaluateBoard(newField, newTop, s.getRowsCleared() + rowsCleared);
+            boolean[][] oldField = new boolean[State.ROWS][State.COLS];
+            int[][] oldIntField = s.getField();
+            for (int r = 0; r < State.ROWS; r++){
+                for (int c = 0; c < State.COLS; c++){
+                    if (oldIntField[r][c] == 0){
+                        oldField[r][c] = false;
+                    } else {
+                        oldField[r][c] = true;
+                    }
+                }
+            }
+            int[][][] pTop = State.getpTop();
+            int[][][] pBottom = State.getpBottom();
+            int[][] pWidth = State.getpWidth();
+            int pieceIndex = s.getNextPiece();
+            int rotationIndex = legalMoves[i][0];
+            int leftPosition = legalMoves[i][1];
+            score = evaluateBoard(newField, newTop, s.getRowsCleared() + rowsCleared, oldField, s.getRowsCleared(), pTop, pBottom, pWidth, pieceIndex,
+                    rotationIndex, leftPosition);
             if (score > bestValue){
                 bestValue = score;
                 bestRot = rot;
@@ -122,10 +140,12 @@ public class HeuristicMovePicker implements IMovePicker {
      * @param top 
      * @return value of board
      */
-    private double evaluateBoard(boolean[][] board, int[] top, int rowsCleared) {
+    private double evaluateBoard(boolean[][] board, int[] top, int rowsCleared, boolean[][] oldBoard, int oldRowsCleared, int[][][] pTop, int[][][] pBottom, int[][] pWidth, int pieceIndex,
+            int rotationIndex, int leftPosition) {
         double score = 0.0;
         for (int i = 0; i < Math.min(weights.size(), heuristics.size()); i++){
-            score += weights.get(i) * heuristics.get(i).getValue(board, top, rowsCleared);
+            score += weights.get(i) * heuristics.get(i).getValue(board, top, rowsCleared, oldBoard, oldRowsCleared, pTop, pBottom, pWidth, pieceIndex,
+            rotationIndex, leftPosition);
         }
         return score;
     }

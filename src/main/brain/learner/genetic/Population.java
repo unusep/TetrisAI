@@ -88,7 +88,7 @@ public class Population<E> {
         ArrayList<Gene<E>> babies = crossOver(parents);
         cull(genePool, babies.size());
         genePool.addAll(babies);
-        mutate(genePool);
+        mutate(parents, genePool);
         printBestGene();
     }
     
@@ -197,9 +197,9 @@ public class Population<E> {
     }
     
     
-    private void mutate(ArrayList<Gene<E>> genes) {
+    private void mutate(ArrayList<Gene<E>> elites, ArrayList<Gene<E>> genes) {
         for (Gene<E> gene : genes){
-            mutationOperator.mutate(gene);
+            if(!elites.contains(genes)) mutationOperator.mutate(gene);
         }
     }
 

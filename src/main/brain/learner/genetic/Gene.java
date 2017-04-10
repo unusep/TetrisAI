@@ -26,6 +26,21 @@ public class Gene<E> implements Comparable<Gene<E>> {
     public void setFitness(double fitness) {
         this.fitness = fitness;
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!Gene.class.isAssignableFrom(obj.getClass())) {
+            return false;
+        }
+        final Gene<E> other = (Gene<E>) obj;
+        for (int i = 0; i < chromosomesWeights.size(); i++){
+            if (this.chromosomesWeights.get(i) != other.chromosomesWeights.get(i)) return false;
+        }
+        return true;
+    }
 
     @Override
     public int compareTo(Gene<E> o) {

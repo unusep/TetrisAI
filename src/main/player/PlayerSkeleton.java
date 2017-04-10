@@ -15,8 +15,6 @@ import main.tetris.heuristics.FlatteningCoefficientHeuristic;
 import main.tetris.heuristics.FloorHuggingCoefficientHeuristic;
 import main.tetris.heuristics.HolesHeuristic;
 import main.tetris.heuristics.IHeuristic;
-import main.tetris.heuristics.MaximumColumnHeightHeuristic;
-import main.tetris.heuristics.RowsClearedHeuristic;
 import main.tetris.heuristics.SumOfHeightOfBlocksHeuristic;
 import main.tetris.heuristics.SumOfHeightOfColumnsHeuristic;
 import main.tetris.heuristics.WallHuggingCoefficientHeuristic;
@@ -59,7 +57,7 @@ public class PlayerSkeleton {
 		IFitnessFunction<IHeuristic> fitnessFunction 
 		    = new AverageRowsClearedFitnessFunction(trainingNumPieces, trainingNumGames);
 		IMutationOperator<IHeuristic> mutationOperator = new GaussianMutation<IHeuristic>();
-		IPopulationSelector<IHeuristic> populationSelector = new PopulationFitnessSelector<IHeuristic>();
+		IPopulationSelector<IHeuristic> populationSelector = new TruncationFitnessSelector<IHeuristic>();
 		
         p.brain = new HeuristicGeneticLearner(
 		        populationSize, 

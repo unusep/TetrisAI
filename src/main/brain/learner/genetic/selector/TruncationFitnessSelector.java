@@ -5,7 +5,7 @@ import java.util.Collections;
 
 import main.brain.learner.genetic.Gene;
 
-public class PopulationFitnessSelector<E> implements IPopulationSelector<E> {
+public class TruncationFitnessSelector<E> implements IPopulationSelector<E> {
 
     @Override
     public ArrayList<Gene<E>> selectElite(ArrayList<Gene<E>> genePool, int num) {

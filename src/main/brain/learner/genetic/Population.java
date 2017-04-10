@@ -76,9 +76,9 @@ public class Population<E> {
      * 1) get fitness of genepool
      * 2) choose genes for breeding
      * 3) crossover to generate babies 
-     * 4) mutate babies
-     * 5) kill to make room
-     * 6) add new babies to genepool
+     * 4) kill to make room
+     * 5) add new babies to genepool
+     * 6) mutate population
      */
     public void nextGeneration() {
         evaluateFitness(genePool);
@@ -86,9 +86,9 @@ public class Population<E> {
         int numBabies = (int) (PERCENTAGE_TO_KILL * (double) genePool.size()); 
         ArrayList<Gene<E>> parents = selectElite(genePool, numBabies);
         ArrayList<Gene<E>> babies = crossOver(parents);
-        mutate(babies);
         cull(genePool, babies.size());
         genePool.addAll(babies);
+        mutate(genePool);
         printBestGene();
     }
     
@@ -233,10 +233,8 @@ public class Population<E> {
      */
     private void evaluateFitness(ArrayList<Gene<E>> genes) {
         for (Gene<E> gene : genes){
-            if (gene.getFitness() == Gene.INITIAL_FITNESS){
-                double fitness = fitnessFunction.evaluateFitness(gene);
-                gene.setFitness(fitness);
-            }
+            double fitness = fitnessFunction.evaluateFitness(gene);
+            gene.setFitness(fitness);
         }
     }
 

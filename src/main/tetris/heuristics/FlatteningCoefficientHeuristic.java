@@ -2,6 +2,8 @@ package main.tetris.heuristics;
 
 import java.util.ArrayList;
 
+import main.tetris.engine.State;
+
 public class FlatteningCoefficientHeuristic implements IHeuristic {
 
     @Override
@@ -9,9 +11,7 @@ public class FlatteningCoefficientHeuristic implements IHeuristic {
         return "FlatteningCoefficientHeuristic";
     }
 
-    @Override
-    public double getValue(boolean[][] board, int[] top, int rowsCleared, boolean[][] oldBoard,
-            int oldRowsCleared, int[][][] pTop, int[][][] pBottom, int[][] pWidth, int pieceIndex,
+    public double getValue(int[][] board, int[] top, int[][][] pTop, int[][][] pBottom, int[][] pWidth, int pieceIndex,
             int rotationIndex, int leftPosition) {
         ArrayList<Integer> filledCoord = new ArrayList<Integer>();
         double flatteningCoeff = 0;
@@ -60,5 +60,10 @@ public class FlatteningCoefficientHeuristic implements IHeuristic {
             }
         }
         return flatteningCoeff;
+    }
+
+    @Override
+    public double getValue(int[] move, State s) {
+        return getValue(s.getField(), s.getTop(), State.getpTop(), State.getpBottom(), State.getpWidth(), s.getNextPiece(), move[State.ORIENT], move[State.SLOT]);
     }
 }

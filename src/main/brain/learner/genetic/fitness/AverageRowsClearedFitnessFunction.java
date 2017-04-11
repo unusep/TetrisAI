@@ -26,19 +26,18 @@ public class AverageRowsClearedFitnessFunction implements IFitnessFunction<IHeur
      */
     @Override
     public double evaluateFitness(Gene<IHeuristic> gene) {
+        IMovePicker movePicker = new HeuristicMovePicker(gene.getChromosomeWeights(), gene.getChromsomes());
         double totalFitness = 0.0;
         for (int i = 0; i < numGames; i++){
             State simulator = new State();
-
+            
 //            new TFrame(simulator);
-            
-            IMovePicker movePicker = new HeuristicMovePicker(gene.getChromosomeWeights(), gene.getChromsomes());
-            
+
             for (int j = 0; j < numPieces; j++){
                 if (simulator.hasLost()) break;
                 int[] bestMove = movePicker.pickBest(simulator);
                 simulator.makeMove(bestMove);
-//                
+                
 //                simulator.draw();
 //                simulator.drawNext(0,0);
 //                try {

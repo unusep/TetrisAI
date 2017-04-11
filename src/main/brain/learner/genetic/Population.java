@@ -90,8 +90,8 @@ public class Population<E> {
         ArrayList<Gene<E>> parents = selectElite(genePool, numBabies);
         ArrayList<Gene<E>> babies = crossOver(parents);
         cull(genePool, babies.size());
+        mutate(babies);
         genePool.addAll(babies);
-        mutate(parents, genePool);
         printBestGene();
     }
     
@@ -200,7 +200,7 @@ public class Population<E> {
     }
     
     
-    private void mutate(ArrayList<Gene<E>> elites, ArrayList<Gene<E>> genes) {
+    private void mutate(ArrayList<Gene<E>> genes) {
         Random ran = new Random();
         for (Gene<E> gene : genes){
             if (ran.nextDouble() < MUTATION_PROBABILITY) {
@@ -243,8 +243,8 @@ public class Population<E> {
             if (gene.mutated){
                 double fitness = fitnessFunction.evaluateFitness(gene);
                 gene.setFitness(fitness);
+                gene.mutated = false;
             }
-            gene.mutated = false;
         }
     }
 

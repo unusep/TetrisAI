@@ -94,9 +94,10 @@ public class TetrisSimulator {
         ROWS = State.ROWS;
         N_PIECES = State.N_PIECES;
         this.field = new int[ROWS][COLS];
+        int[][] sField = s.getField();
         for (int r = 0; r < ROWS; r++){
-            for (int c = 0; c < ROWS; c++){
-                this.field[r][c] = s.getField()[r][c];
+            for (int c = 0; c < COLS; c++){
+                this.field[r][c] = sField[r][c];
             }
         }
         this.top = new int[COLS];
@@ -140,7 +141,7 @@ public class TetrisSimulator {
         N_PIECES = State.N_PIECES;
         this.field = new int[ROWS][COLS];
         for (int r = 0; r < ROWS; r++){
-            for (int c = 0; c < ROWS; c++){
+            for (int c = 0; c < COLS; c++){
                 this.field[r][c] = s.getField()[r][c];
             }
         }

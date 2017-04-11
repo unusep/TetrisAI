@@ -129,6 +129,51 @@ public class TetrisSimulator {
             }
         }
     }
+    //constructor
+    public TetrisSimulator(TetrisSimulator s) {
+        this.turn = s.getTurnNumber();
+        this.nextPiece = s.getNextPiece();
+        this.cleared = s.getRowsCleared();
+        this.lost = s.hasLost();
+        COLS = State.COLS;
+        ROWS = State.ROWS;
+        N_PIECES = State.N_PIECES;
+        this.field = new int[ROWS][COLS];
+        for (int r = 0; r < ROWS; r++){
+            for (int c = 0; c < ROWS; c++){
+                this.field[r][c] = s.getField()[r][c];
+            }
+        }
+        this.top = new int[COLS];
+        for (int i = 0; i < COLS; i++){
+            this.top[i] = s.getTop()[i];
+        }
+        pOrients = State.getpOrients();
+        pWidth = State.getpWidth();
+        pHeight = State.getpHeight();
+        pBottom = State.getpBottom();
+        pTop = State.getpTop();
+        for(int i = 0; i < N_PIECES; i++) {
+            //figure number of legal moves
+            int n = 0;
+            for(int j = 0; j < pOrients[i]; j++) {
+                //number of locations in this orientation
+                n += COLS+1-pWidth[i][j];
+            }
+            //allocate space
+            legalMoves[i] = new int[n][2];
+            //for each orientation
+            n = 0;
+            for(int j = 0; j < pOrients[i]; j++) {
+                //for each slot
+                for(int k = 0; k < COLS+1-pWidth[i][j];k++) {
+                    legalMoves[i][n][ORIENT] = j;
+                    legalMoves[i][n][SLOT] = k;
+                    n++;
+                }
+            }
+        }
+    }
     
     //initialize legalMoves
     {

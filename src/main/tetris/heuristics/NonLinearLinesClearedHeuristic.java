@@ -1,15 +1,21 @@
 package main.tetris.heuristics;
 
-public class NonLinearLinesClearedHeuristic implements IHeuristic {
+import main.tetris.engine.State;
+import main.tetris.engine.TetrisSimulator;
 
-    @Override
-    public double getValue(boolean[][] board, int[] top, int rowsCleared, boolean[][] oldBoard,
-            int oldRowsCleared, int[][][] pTop, int[][][] pBottom, int[][] pWidth, int pieceIndex, int rotationIndex, int leftPosition){
-        return Math.pow(2, rowsCleared - oldRowsCleared);
-    }
+public class NonLinearLinesClearedHeuristic implements IHeuristic {
 
     @Override
     public String toString(){
         return "NonLinearLinesClearedHeuristic";
+    }
+
+    @Override
+    public double getValue(int[] move, State s) {
+        TetrisSimulator simulator = new TetrisSimulator(s);
+        int before = simulator.getRowsCleared();
+        simulator.makeMove(move);
+        int after = simulator.getRowsCleared();
+        return Math.pow(2, after - before);
     }
 }

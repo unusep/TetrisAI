@@ -1,8 +1,11 @@
 package main.tetris.heuristics;
 
+import main.tetris.engine.State;
+import main.tetris.engine.TetrisSimulator;
+
 public class MaximumColumnHeightHeuristic implements IHeuristic {
 
-    public double getValue(boolean[][] board, int[] top, int rowsCleared) {
+    public double getValue(int[][] board, int[] top) {
         double max = 0;
         for (int col = 0; col < board[0].length; col++){
             if (top[col] > max) max = top[col];
@@ -16,8 +19,10 @@ public class MaximumColumnHeightHeuristic implements IHeuristic {
     }
 
     @Override
-    public double getValue(boolean[][] board, int[] top, int rowsCleared, boolean[][] oldBoard,
-            int oldRowsCleared, int[][][] pTop, int[][][] pBottom, int[][] pWidth, int pieceIndex, int rotationIndex, int leftPosition){
-        return getValue(board, top, rowsCleared);
+    public double getValue(int[] move, State s) {
+        TetrisSimulator simulator = new TetrisSimulator(s);
+        simulator.makeMove(move);
+        return getValue(simulator.getField(), simulator.getTop());
     }
+
 }

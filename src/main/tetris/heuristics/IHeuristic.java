@@ -1,6 +1,8 @@
 package main.tetris.heuristics;
 
+import main.tetris.engine.State;
+
 public interface IHeuristic {
-    public double getValue(boolean[][] board, int[] top, int rowsCleared, boolean[][] oldBoard,
-            int oldRowsCleared, int[][][] pTop, int[][][] pBottom, int[][] pWidth, int pieceIndex, int rotationIndex, int leftPosition);
+
+    public double getValue(int[] move, State s);
 }

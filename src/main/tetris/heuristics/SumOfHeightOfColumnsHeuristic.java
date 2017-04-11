@@ -1,8 +1,11 @@
 package main.tetris.heuristics;
 
+import main.tetris.engine.State;
+import main.tetris.engine.TetrisSimulator;
+
 public class SumOfHeightOfColumnsHeuristic implements IHeuristic {
 
-    public double getValue(boolean[][] board, int[] top, int rowsCleared) {
+    public double getValue(int[][] board, int[] top) {
         double count = 0.0;
         for (int c = 0; c < top.length; c++){
             count += top[c];
@@ -16,8 +19,9 @@ public class SumOfHeightOfColumnsHeuristic implements IHeuristic {
     }
 
     @Override
-    public double getValue(boolean[][] board, int[] top, int rowsCleared, boolean[][] oldBoard,
-            int oldRowsCleared, int[][][] pTop, int[][][] pBottom, int[][] pWidth, int pieceIndex, int rotationIndex, int leftPosition){
-        return getValue(board, top, rowsCleared);
+    public double getValue(int[] move, State s) {
+        TetrisSimulator simulator = new TetrisSimulator(s);
+        simulator.makeMove(move);
+        return getValue(simulator.getField(), simulator.getTop());
     }
 }

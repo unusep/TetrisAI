@@ -12,13 +12,13 @@ public class Gene<E> implements Comparable<Gene<E>> {
     private ArrayList<Double> chromosomesWeights;
     private ArrayList<E> chromosomes;
     private double fitness;
-    public boolean mutated;
+    public boolean evaluated;
     
     public Gene(ArrayList<E> chromosomes, ArrayList<Double> weights) {
         this.chromosomes = chromosomes; 
         this.chromosomesWeights = weights;
         this.fitness = INITIAL_FITNESS;
-        this.mutated = true;
+        this.evaluated = false;
     }
     
     public double getFitness(){

@@ -205,7 +205,7 @@ public class Population<E> {
         for (Gene<E> gene : genes){
             if (ran.nextDouble() < MUTATION_PROBABILITY) {
                 mutationOperator.mutate(gene);
-                gene.mutated = true;
+                gene.evaluated = false;
             }
         }
     }
@@ -240,10 +240,10 @@ public class Population<E> {
      */
     private void evaluateFitness(ArrayList<Gene<E>> genes) {
         for (Gene<E> gene : genes){
-            if (gene.mutated){
+            if (!gene.evaluated){
                 double fitness = fitnessFunction.evaluateFitness(gene);
                 gene.setFitness(fitness);
-                gene.mutated = false;
+                gene.evaluated = true;
             }
         }
     }

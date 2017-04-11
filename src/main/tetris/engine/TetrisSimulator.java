@@ -3,53 +3,46 @@ package main.tetris.engine;
 import java.awt.Color;
 
 public class TetrisSimulator {
-    private int oldTurn;
-    private boolean oldLost;
-    private int[] oldTop;
-    private int[][] oldField;
-    private int oldCleared;
-    private int oldNextPiece;
-    
-    public static final int COLS = 10;
-    public static final int ROWS = 21;
-    public static final int N_PIECES = 7;
 
-    
+    public static int COLS = 10;
+    public static int ROWS = 21;
+    public static int N_PIECES = 7;
+
+
 
     public boolean lost = false;
-    
-    
-    
 
-    
+
+
+
     public TLabel label;
-    
+
     //current turn
     private int turn = 0;
     private int cleared = 0;
-    
+
     //each square in the grid - int means empty - other values mean the turn it was placed
     private int[][] field = new int[ROWS][COLS];
     //top row+1 of each column
     //0 means empty
     private int[] top = new int[COLS];
-    
-    
+
+
     //number of next piece
     protected int nextPiece;
-    
-    
-    
+
+
+
     //all legal moves - first index is piece type - then a list of 2-length arrays
     protected static int[][][] legalMoves = new int[N_PIECES][][];
-    
+
     //indices for legalMoves
     public static final int ORIENT = 0;
     public static final int SLOT = 1;
-    
+
     //possible orientations for a given piece type
     protected static int[] pOrients = {1,2,4,4,4,2,2};
-    
+
     //the next several arrays define the piece vocabulary in detail
     //width of the pieces [piece ID][orientation]
     protected static int[][] pWidth = {
@@ -72,23 +65,70 @@ public class TetrisSimulator {
             {2,3}
     };
     private static int[][][] pBottom = {
-        {{0,0}},
-        {{0},{0,0,0,0}},
-        {{0,0},{0,1,1},{2,0},{0,0,0}},
-        {{0,0},{0,0,0},{0,2},{1,1,0}},
-        {{0,1},{1,0,1},{1,0},{0,0,0}},
-        {{0,0,1},{1,0}},
-        {{1,0,0},{0,1}}
+            {{0,0}},
+            {{0},{0,0,0,0}},
+            {{0,0},{0,1,1},{2,0},{0,0,0}},
+            {{0,0},{0,0,0},{0,2},{1,1,0}},
+            {{0,1},{1,0,1},{1,0},{0,0,0}},
+            {{0,0,1},{1,0}},
+            {{1,0,0},{0,1}}
     };
     private static int[][][] pTop = {
-        {{2,2}},
-        {{4},{1,1,1,1}},
-        {{3,1},{2,2,2},{3,3},{1,1,2}},
-        {{1,3},{2,1,1},{3,3},{2,2,2}},
-        {{3,2},{2,2,2},{2,3},{1,2,1}},
-        {{1,2,2},{3,2}},
-        {{2,2,1},{2,3}}
+            {{2,2}},
+            {{4},{1,1,1,1}},
+            {{3,1},{2,2,2},{3,3},{1,1,2}},
+            {{1,3},{2,1,1},{3,3},{2,2,2}},
+            {{3,2},{2,2,2},{2,3},{1,2,1}},
+            {{1,2,2},{3,2}},
+            {{2,2,1},{2,3}}
     };
+
+
+    //constructor
+    public TetrisSimulator(State s) {
+        this.turn = s.getTurnNumber();
+        this.nextPiece = s.getNextPiece();
+        this.cleared = s.getRowsCleared();
+        this.lost = s.hasLost();
+        COLS = State.COLS;
+        ROWS = State.ROWS;
+        N_PIECES = State.N_PIECES;
+        this.field = new int[ROWS][COLS];
+        for (int r = 0; r < ROWS; r++){
+            for (int c = 0; c < ROWS; c++){
+                this.field[r][c] = s.getField()[r][c];
+            }
+        }
+        this.top = new int[COLS];
+        for (int i = 0; i < COLS; i++){
+            this.top[i] = s.getTop()[i];
+        }
+        pOrients = State.getpOrients();
+        pWidth = State.getpWidth();
+        pHeight = State.getpHeight();
+        pBottom = State.getpBottom();
+        pTop = State.getpTop();
+        for(int i = 0; i < N_PIECES; i++) {
+            //figure number of legal moves
+            int n = 0;
+            for(int j = 0; j < pOrients[i]; j++) {
+                //number of locations in this orientation
+                n += COLS+1-pWidth[i][j];
+            }
+            //allocate space
+            legalMoves[i] = new int[n][2];
+            //for each orientation
+            n = 0;
+            for(int j = 0; j < pOrients[i]; j++) {
+                //for each slot
+                for(int k = 0; k < COLS+1-pWidth[i][j];k++) {
+                    legalMoves[i][n][ORIENT] = j;
+                    legalMoves[i][n][SLOT] = k;
+                    n++;
+                }
+            }
+        }
+    }
     
     //initialize legalMoves
     {
@@ -113,10 +153,10 @@ public class TetrisSimulator {
                 }
             }
         }
-    
+
     }
-    
-    
+
+
     public int[][] getField() {
         return field;
     }
@@ -128,7 +168,7 @@ public class TetrisSimulator {
     public static int[] getpOrients() {
         return pOrients;
     }
-    
+
     public static int[][] getpWidth() {
         return pWidth;
     }
@@ -149,58 +189,40 @@ public class TetrisSimulator {
     public int getNextPiece() {
         return nextPiece;
     }
-    
+
     public boolean hasLost() {
         return lost;
     }
-    
+
     public int getRowsCleared() {
         return cleared;
     }
-    
+
     public int getTurnNumber() {
         return turn;
     }
 
-    
-    //constructor
-    public TetrisSimulator() {
-        nextPiece = randomPiece();
-    }
-    
-    public TetrisSimulator(State s) {
-        this.field = s.getField().clone();
-        this.top = s.getTop().clone();
-        TetrisSimulator.pOrients = State.getpOrients();
-        TetrisSimulator.pWidth = State.getpWidth();
-        TetrisSimulator.pHeight = State.getpHeight();
-        TetrisSimulator.pBottom = State.getpBottom();
-        TetrisSimulator.pTop = State.getpTop();
-        this.nextPiece = s.getNextPiece();
-        this.lost = s.hasLost();
-        this.cleared = s.getRowsCleared();
-        this.turn = s.getNextPiece();
-        TetrisSimulator.legalMoves = State.legalMoves;
-    }
+
+
 
     //random integer, returns 0-6
     private int randomPiece() {
         return (int)(Math.random()*N_PIECES);
     }
-    
 
 
-    
+
+
     //gives legal moves for 
     public int[][] legalMoves() {
         return legalMoves[nextPiece];
     }
-    
+
     //make a move based on the move index - its order in the legalMoves list
     public void makeMove(int move) {
         makeMove(legalMoves[nextPiece][move]);
     }
-    
+
     //make a move based on an array of orient and slot
     public void makeMove(int[] move) {
         makeMove(move[ORIENT],move[SLOT]);
@@ -215,30 +237,30 @@ public class TetrisSimulator {
         for(int c = 1; c < pWidth[nextPiece][orient];c++) {
             height = Math.max(height,top[slot+c]-pBottom[nextPiece][orient][c]);
         }
-        
+
         //check if game ended
         if(height+pHeight[nextPiece][orient] >= ROWS) {
             lost = true;
             return false;
         }
 
-        
+
         //for each column in the piece - fill in the appropriate blocks
         for(int i = 0; i < pWidth[nextPiece][orient]; i++) {
-            
+
             //from bottom to top of brick
             for(int h = height+pBottom[nextPiece][orient][i]; h < height+pTop[nextPiece][orient][i]; h++) {
                 field[h][i+slot] = turn;
             }
         }
-        
+
         //adjust top
         for(int c = 0; c < pWidth[nextPiece][orient]; c++) {
             top[slot+c]=height+pTop[nextPiece][orient][c];
         }
-        
+
         int rowsCleared = 0;
-        
+
         //check for full rows - starting at the top
         for(int r = height+pHeight[nextPiece][orient]-1; r >= height; r--) {
             //check all columns in the row
@@ -266,16 +288,16 @@ public class TetrisSimulator {
                 }
             }
         }
-    
+
 
         //pick a new piece
         nextPiece = randomPiece();
-        
 
-        
+
+
         return true;
     }
-    
+
     public void draw() {
         label.clear();
         label.setPenRadius();
@@ -284,9 +306,9 @@ public class TetrisSimulator {
         label.line(COLS, 0, COLS, ROWS+5);
         label.line(0, 0, COLS, 0);
         label.line(0, ROWS-1, COLS, ROWS-1);
-        
+
         //show bricks
-                
+
         for(int c = 0; c < COLS; c++) {
             for(int r = 0; r < top[c]; r++) {
                 if(field[r][c] != 0) {
@@ -294,25 +316,25 @@ public class TetrisSimulator {
                 }
             }
         }
-        
+
         for(int i = 0; i < COLS; i++) {
             label.setPenColor(Color.red);
             label.line(i, top[i], i+1, top[i]);
             label.setPenColor();
         }
-        
+
         label.show();
-        
-        
+
+
     }
-    
+
     public static final Color brickCol = Color.gray; 
-    
+
     private void drawBrick(int c, int r) {
         label.filledRectangleLL(c, r, 1, 1, brickCol);
         label.rectangleLL(c, r, 1, 1);
     }
-    
+
     public void drawNext(int slot, int orient) {
         for(int i = 0; i < pWidth[nextPiece][orient]; i++) {
             for(int j = pBottom[nextPiece][orient][i]; j <pTop[nextPiece][orient][i]; j++) {
@@ -321,7 +343,7 @@ public class TetrisSimulator {
         }
         label.show();
     }
-    
+
     //visualization
     //clears the area where the next piece is shown (top)
     public void clearNext() {
@@ -331,30 +353,4 @@ public class TetrisSimulator {
     }
 
 
-    /**
-     * Saves the state of the last move
-     */
-    public void saveState() {
-        this.oldTurn = turn;
-        this.oldLost = lost;
-        this.oldField = field.clone();
-        this.oldTop = top.clone();
-        this.oldCleared = cleared;
-        this.oldNextPiece = nextPiece;
-    }
-    
-    /**
-     * Undoes the last move if it has been saved
-     * Returns 
-     */
-    public void undoMove(){
-        turn = oldTurn;
-        lost = oldLost;
-        field = oldField.clone();
-        top = oldTop.clone();
-        cleared = oldCleared;
-        nextPiece = oldNextPiece;
-    }
-
-    
 }

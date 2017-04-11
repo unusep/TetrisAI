@@ -40,11 +40,11 @@ public class PlayerSkeleton {
 		int TRAINING_MAX_PIECES = 10000;
 		int FITNESS_BEST_OF_NUM_GAMES = 1;
 		
-		int POPULATION_SIZE = 1000;
+		int POPULATION_SIZE = 100;
 		int NUMBER_OF_GENERATIONS = 100;
 		double PERCENTAGE_TO_CULL = 0.3; // 0.0-0.49 what percentage of the population to cull
 		double CHROMOSOME_MUTATION_PROBABILITY = 0.2; // 0.0-1.0 how likely it is for a particular chromosome in a gene to mutate 
-		double GENE_MUTATION_PROBABILITY = 0.2; // how like it is for a particular gene in the population to be selected for mutation
+		double GENE_MUTATION_PROBABILITY = 0.1; // how like it is for a particular gene in the population to be selected for mutation
 		
 		// end of set up genetic learner variables 
 		

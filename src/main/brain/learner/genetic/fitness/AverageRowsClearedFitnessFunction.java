@@ -4,8 +4,6 @@ import main.brain.learner.genetic.Gene;
 import main.brain.move.picker.HeuristicMovePicker;
 import main.brain.move.picker.IMovePicker;
 import main.tetris.engine.State;
-import main.tetris.engine.TFrame;
-import main.tetris.engine.TetrisSimulator;
 import main.tetris.heuristics.IHeuristic;
 
 public class AverageRowsClearedFitnessFunction implements IFitnessFunction<IHeuristic> {

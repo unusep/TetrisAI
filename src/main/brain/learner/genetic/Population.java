@@ -18,7 +18,6 @@ import main.brain.learner.genetic.selector.*;
 /**
  * Stores a population of genes with chromosomes of type E
  * Genetic algorithm is executed to generate nextGeneration()
- * TODO: Abstract file functions to facilitate SLAP
  */
 public class Population<E> {
     private static double PERCENTAGE_TO_KILL = 0.2;
